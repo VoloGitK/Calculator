@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Out Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .result-container {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid red; /* Add red border */
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .results, .tip-outs {
+            flex: 1;
+            margin: 0.5rem;
+            min-width: 250px;
+        }
+        .result-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .result-container td {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+        }
+        .result-container tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+        .positive, .negative {
+            font-weight: bold;
+        }
+        .positive {
+            color: red;
+        }
+        .negative {
+            color: green;
+        }
+        .highlighted-row {
+            font-weight: bold;
+            color: #006400; /* Dark green */
+        }
+        .great-job {
+            color: green;
+            font-size: smaller;
+            margin-top: 1rem;
+        }
+        .warning-message {
+            color: red;
+            font-size: smaller; /* Not bold, as requested */
+            margin-top: 10px;
+        }
+        .total-earned {
+            font-weight: bold;
+            color: white;
+            background-color: green;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.2rem;
+        }
+        .negative-sign {
+            visibility: hidden; /* Hide negative sign */
+        }
+    </style>
+</head>
+<body>
+<main class="container">
+    <section>
+        <hgroup>
+            <h2>Tip Out Calculator</h2>
+            <h3>Calculate your tip outs easily</h3>
+        </hgroup>
+        <div class="input-container">
+            <label for="totalSale">Total Sales</label>
+            <input type="number" id="totalSale" placeholder="Enter total sales">
+            <label for="netSales">Net Sales</label>
+            <input type="number" id="netSales" placeholder="Enter net sales">
+            <label for="serviceCharge">Service Charge</label>
+            <input type="number" id="serviceCharge" placeholder="Enter service charge">
+            <label for="cash">Cash</label>
+            <input type="number" id="cash" placeholder="Enter amount of cash">
+            <label for="barTipOut">Bar Tip Out</label>
+            <select id="barTipOut">
+                <option value="0">None</option>
+                <option value="1">1%</option>
+            </select>
+            <label for="hostExpoTipOut">Host/Expo Tip Out</label>
+            <select id="hostExpoTipOut">
+                <option value="0">None</option>
+                <option value="0.5">0.5%</option>
+                <option value="1">1%</option>
+            </select>
+            <button onclick="calculate()">Calculate</button>
+            <button onclick="clearFields()">Clear</button>
+        </div>
+        <div class="result-container">
+            <div class="flex-container">
+                <div class="results">
+                    <h3>Envelope Output</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Total Checks Paid:</td>
+                                <td><span id="totalChecksPaid">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Minus Total Non-Cash Items:</td>
+                                <td><span id="minusTotalNonCashItems">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Plus 2.5%:</td>
+                                <td><span id="plusTwoPointFivePercentage">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Minus Service Charge:</td>
+                                <td><span id="minusServiceCharge">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Equals Net Cash Due:</td>
+                                <td><span id="equalsNetCashDue">$0.00</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="netCashDueWarning" class="warning-message" style="display:none;"></div>
+                </div>
+                <div class="tip-outs">
+                    <h3>Tip Out</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Bar Amount:</td>
+                                <td><span id="barAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Host/Expo Amount:</td>
+                                <td><span id="hostExpoAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>House Amount:</td>
+                                <td><span id="houseAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kitchen Amount:</td>
+                                <td><span id="kitchenAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Total Earned:</td>
+                                <td><span id="totalEarned" class="total-earned">$0.00</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p id="dueBackMessage" class="warning-message" style="display:none;"></p>
+                    <div id="greatJobMessage" class="great-job"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="container">
+    <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+</footer>
+<script>
+function calculate() {
+    const totalSale = parseFloat(document.getElementById('totalSale').value) || 0;
+    const netSales = parseFloat(document.getElementById('netSales').value) || 0;
+    const serviceCharge = parseFloat(document.getElementById('serviceCharge').value) || 0;
+    const cash = parseFloat(document.getElementById('cash').value) || 0;
+    const barTipOutPercent = parseFloat(document.getElementById('barTipOut').value) || 0;
+    const hostExpoTipOutPercent = parseFloat(document.getElementById('hostExpoTipOut').value) || 0;
+
+    const totalChecksPaid = totalSale;
+    const minusTotalNonCashItems = totalSale - cash;
+    const plusTwoPointFivePercentage = serviceCharge * 0.025;
+    const minusServiceCharge = serviceCharge;
+    const equalsNetCashDue = totalSale - minusTotalNonCashItems + plusTwoPointFivePercentage - serviceCharge;
+
+    const barAmount = netSales * (barTipOutPercent / 100);
+    const hostExpoAmount = netSales * (hostExpoTipOutPercent / 100);
+    const houseAmount = netSales * 0.02;
+    const kitchenAmount = netSales * 0.025;
+    const totalEarned = serviceCharge - (barAmount + hostExpoAmount + houseAmount + kitchenAmount + plusTwoPointFivePercentage);
+
+    document.getElementById('totalChecksPaid').textContent = `$${totalChecksPaid.toFixed(2)}`;
+    document.getElementById('minusTotalNonCashItems').textContent = `$${minusTotalNonCashItems.toFixed(2)}`;
+    document.getElementById('plusTwoPointFivePercentage').textContent = `$${plusTwoPointFivePercentage.toFixed(2)}`;
+    document.getElementById('minusServiceCharge').textContent = `$${minusServiceCharge.toFixed(2)}`;
+    document.getElementById('equalsNetCashDue').textContent = `$${equalsNetCashDue.toFixed(2)}`;
+    document.getElementById('equalsNetCashDue').className = equalsNetCashDue >= 0 ? 'positive' : 'negative';
+
+    // Add the ⚠ sign if the value is positive
+    document.getElementById('equalsNetCashDue').innerHTML += equalsNetCashDue >= 0 ? " ⚠" : "";
+
+    const dueBack = equalsNetCashDue + houseAmount + kitchenAmount;
+    document.getElementById('dueBackMessage').textContent = dueBack >= 0 ? "No Due Back" : `Due Back: $${Math.abs(dueBack).toFixed(2)}`;
+    document.getElementById('dueBackMessage').style.display = 'block';
+    document.getElementById('dueBackMessage').className = dueBack >= 0 ? 'positive' : 'negative';
+
+    document.getElementById('barAmount').textContent = `$${barAmount.toFixed(2)}`;
+    document.getElementById('hostExpoAmount').textContent = `$${hostExpoAmount.toFixed(2)}`;
+    document.getElementById('houseAmount').textContent = `$${houseAmount.toFixed(2)}`;
+    document.getElementById('kitchenAmount').textContent = `$${kitchenAmount.toFixed(2)}`;
+    document.getElementById('totalEarned').textContent = `$${totalEarned.toFixed(2)}`;
+
+    const greatJobMessageElement = document.getElementById('greatJobMessage');
+    greatJobMessageElement.textContent = totalEarned > 0 ? `Great Job!!! You've earned ${((totalEarned / netSales) * 100).toFixed(2)}% of Net Sales.` : "";
+
+    // Warning for Equals Net Cash Due
+    if (equalsNetCashDue > 0) {
+        document.getElementById('netCashDueWarning').innerHTML = "⚠ The specified sum is required to be tendered in cash and enclosed within an envelope.";
+        document.getElementById('netCashDueWarning').style.display = "block";
+    } else {
+        document.getElementById('netCashDueWarning').style.display = "none";
+    }
+
+    // Tip Out Check Deduction
+    if (dueBack >= 0) {
+        const tipOutCheckDeduction = houseAmount + kitchenAmount;
+        document.getElementById('dueBackMessage').innerHTML = `<div style="font-size: smaller; font-weight: normal; color: red; border: 1px solid red; padding: 5px;">No Due Back!<br><span style="font-size: smaller; font-weight: normal; color: red;">Check Deduction for Tip Out:</span> <span class="negative-sign">-</span><span style="color: red; background-color: rgba(255, 0, 0, 0.1); padding: 2px;">$${Math.abs(tipOutCheckDeduction).toFixed(2)}</span></div>`;
+        document.getElementById('dueBackMessage').style.display = 'block';
+        document.getElementById('dueBackMessage').className = 'positive';
+    }
+}
+
+function clearFields() {
+    document.querySelectorAll('input, select').forEach(element => element.value = '');
+    document.querySelectorAll('.result-container span').forEach(span => span.textContent = '$0.00');
+    document.getElementById('netCashDueWarning').style.display = 'none';
+    document.getElementById('dueBackMessage').style.display = 'none';
+    document.getElementById('greatJobMessage').textContent = '';
+}
+</script>
+</body>
+</html>
+
