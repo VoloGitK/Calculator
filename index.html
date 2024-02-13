@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip Out Calculator</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="container">
+    <section>
+        <hgroup>
+            <h2>Tip Out Calculator</h2>
+            <h3>Calculate your tip outs easily</h3>
+        </hgroup>
+        <div class="input-container">
+            <label for="totalSale">Total Sales</label>
+            <input type="number" id="totalSale" placeholder="Enter total sales">
+            <label for="netSales">Net Sales</label>
+            <input type="number" id="netSales" placeholder="Enter net sales">
+            <label for="serviceCharge">Service Charge</label>
+            <input type="number" id="serviceCharge" placeholder="Enter service charge">
+            <label for="cash">Cash</label>
+            <input type="number" id="cash" placeholder="Enter amount of cash">
+            <label for="barTipOut">Bar Tip Out</label>
+            <select id="barTipOut">
+                <option value="0">None</option>
+                <option value="1">1%</option>
+            </select>
+            <label for="hostExpoTipOut">Host/Expo Tip Out</label>
+            <select id="hostExpoTipOut">
+                <option value="0">None</option>
+                <option value="0.5">0.5%</option>
+                <option value="1">1%</option>
+            </select>
+            <button onclick="calculate()">Calculate</button>
+            <button onclick="clearFields()">Clear</button>
+        </div>
+        <div class="result-container">
+            <div class="flex-container">
+                <div class="results">
+                    <h3>Envelope Output</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Total Checks Paid:</td>
+                                <td><span id="totalChecksPaid">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Minus Total Non-Cash Items:</td>
+                                <td><span id="minusTotalNonCashItems">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Plus 2.5%:</td>
+                                <td><span id="plusTwoPointFivePercentage">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Minus Service Charge:</td>
+                                <td><span id="minusServiceCharge">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Equals Net Cash Due:</td>
+                                <td><span id="equalsNetCashDue">$0.00</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tip-outs">
+                    <h3>Tip Out</h3>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Bar Amount:</td>
+                                <td><span id="barAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Host/Expo Amount:</td>
+                                <td><span id="hostExpoAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>House Amount:</td>
+                                <td><span id="houseAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Kitchen Amount:</td>
+                                <td><span id="kitchenAmount">$0.00</span></td>
+                            </tr>
+                            <tr>
+                                <td>Total Earned:</td>
+                                <td><span id="totalEarned" class="total-earned">$0.00</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="container">
+    <small><a href="#">Privacy Policy</a> • <a href="#">Terms of Use</a></small>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
