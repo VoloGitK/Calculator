@@ -1,0 +1,62 @@
+.result-container {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid red;
+}
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.results, .tip-outs {
+    flex: 1;
+    margin: 0.5rem;
+    min-width: 250px;
+}
+.result-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.result-container td {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+}
+.result-container tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+.positive, .negative {
+    font-weight: bold;
+}
+.positive {
+    color: red;
+}
+.negative {
+    color: green;
+}
+.highlighted-row {
+    font-weight: bold;
+    color: #006400;
+}
+.great-job {
+    color: green;
+    font-size: smaller;
+    margin-top: 1rem;
+}
+.warning-message {
+    color: red;
+    font-size: smaller;
+    margin-top: 10px;
+}
+.total-earned {
+    font-weight: bold;
+    color: white;
+    background-color: green;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.2rem;
+}
+.negative-sign {
+    visibility: hidden;
+}
